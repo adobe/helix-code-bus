@@ -4,7 +4,7 @@
 
 ## Status
 [![codecov](https://img.shields.io/codecov/c/github/adobe/helix-code-bus.svg)](https://codecov.io/gh/adobe/helix-code-bus)
-[![CircleCI](https://img.shields.io/circleci/project/github/adobe/helix-code-bus.svg)](https://circleci.com/gh/adobe/helix-code-bus)
+[![CircleCI](https://circleci.com/gh/adobe/helix-code-bus.svg?style=svg&circle-token=e25a1785a7b3b6ccbfe20ea56733c9cd7b9aa0e2)](https://circleci.com/gh/adobe/helix-code-bus)
 [![GitHub license](https://img.shields.io/github/license/adobe/helix-code-bus.svg)](https://github.com/adobe/helix-code-bus/blob/main/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/adobe/helix-code-bus.svg)](https://github.com/adobe/helix-code-bus/issues)
 [![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/helix-code-bus.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/helix-code-bus)
