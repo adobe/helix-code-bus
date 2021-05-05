@@ -22,6 +22,8 @@ class MockStorageS3 {
   constructor() {
     this.added = [];
     this.removed = [];
+    this.rmdirs = [];
+    this.copys = [];
   }
 
   async put(filePath, body, contentType, meta) {
@@ -32,6 +34,14 @@ class MockStorageS3 {
 
   async remove(filePath) {
     this.removed.push(filePath);
+  }
+
+  async rmdir(filePath) {
+    this.rmdirs.push(filePath);
+  }
+
+  async copy(src, dst) {
+    this.copys.push({ src, dst });
   }
 }
 
@@ -94,6 +104,27 @@ describe('Sync test', () => {
 
     assert.deepEqual(storage.added, []);
     assert.deepEqual(storage.removed, []);
+    assert.deepEqual(storage.copys, [{
+      dst: '/tripodsan/helix-test-private/new-branch/',
+      src: '/tripodsan/helix-test-private/master/',
+    }]);
+  });
+
+  it('handles branch creation with no base ref', async () => {
+    const storage = new MockStorageS3();
+    const events = JSON.parse(await fs.readFile(path.resolve(__dirname, 'fixtures', 'events-branch-created.json'), 'utf-8'));
+    events.baseRef = '';
+    await sync(events, {
+      log: console,
+      env: {
+        GH_TOKEN: 'fake',
+      },
+      storage,
+    });
+
+    assert.deepEqual(storage.added, []);
+    assert.deepEqual(storage.removed, []);
+    assert.deepEqual(storage.copys, []);
   });
 
   it('handles branch deletion', async () => {
@@ -109,5 +140,42 @@ describe('Sync test', () => {
 
     assert.deepEqual(storage.added, []);
     assert.deepEqual(storage.removed, []);
+    assert.deepEqual(storage.rmdirs, [
+      '/tripodsan/helix-test-private/new-branch/',
+    ]);
+  });
+
+  it('handles branch deletion on main', async () => {
+    const storage = new MockStorageS3();
+    const events = JSON.parse(await fs.readFile(path.resolve(__dirname, 'fixtures', 'events-branch-deleted.json'), 'utf-8'));
+    events.ref = 'main';
+    await sync(events, {
+      log: console,
+      env: {
+        GH_TOKEN: 'fake',
+      },
+      storage,
+    });
+
+    assert.deepEqual(storage.added, []);
+    assert.deepEqual(storage.removed, []);
+    assert.deepEqual(storage.rmdirs, []);
+  });
+
+  it('handles branch deletion on master', async () => {
+    const storage = new MockStorageS3();
+    const events = JSON.parse(await fs.readFile(path.resolve(__dirname, 'fixtures', 'events-branch-deleted.json'), 'utf-8'));
+    events.ref = 'master';
+    await sync(events, {
+      log: console,
+      env: {
+        GH_TOKEN: 'fake',
+      },
+      storage,
+    });
+
+    assert.deepEqual(storage.added, []);
+    assert.deepEqual(storage.removed, []);
+    assert.deepEqual(storage.rmdirs, []);
   });
 });

@@ -20,6 +20,17 @@ curl https://helix-pages.anywhere.run/helix-services/code-bus@v1
 
 For more, see the [API documentation](docs/API.md).
 
+
+## Initial Sync
+
+An initial sync of repository can be done using the aws cli:
+
+```bash
+$ cd my-git-checkout
+$ git pull origin main
+$ aws --profile adobe s3 sync  --exclude ".git/*" --exclude ".github/*" . s3://helix-code-bus/<owner>/<repo>/main 
+```
+
 ## Development
 
 ### Deploying Helix Code Bus

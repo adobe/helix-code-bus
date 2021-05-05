@@ -14,7 +14,10 @@ const {
   S3Client,
   PutObjectCommand,
   DeleteObjectCommand,
+  CopyObjectCommand,
+  ListObjectsV2Command,
 } = require('@aws-sdk/client-s3');
+const processQueue = require('@adobe/helix-shared-process-queue');
 
 class StorageS3 {
   constructor(opts) {
@@ -63,6 +66,77 @@ class StorageS3 {
     const result = await this._s3.send(new DeleteObjectCommand(input));
     this._log.info(`object deleted: ${input.Bucket}/${input.Key}`);
     return result;
+  }
+
+  async list(prefix) {
+    let ContinuationToken;
+    const keys = [];
+    do {
+      // eslint-disable-next-line no-await-in-loop
+      const result = await this._s3.send(new ListObjectsV2Command({
+        Bucket: this._bucket,
+        ContinuationToken,
+        Prefix: prefix,
+      }));
+      ContinuationToken = result.IsTruncated ? result.NextContinuationToken : '';
+      (result.Contents || []).forEach((content) => {
+        keys.push(content.Key);
+      });
+    } while (ContinuationToken);
+    return keys;
+  }
+
+  async copy(src, dst) {
+    const tasks = [];
+    const Prefix = src.substring(1);
+    const dstPrefix = dst.substring(1);
+    this._log.info(`fetching list of files to copy ${src} => ${dst}`);
+    (await this.list(Prefix)).forEach((key) => {
+      tasks.push({
+        src: key,
+        dst: `${dstPrefix}${key.substring(Prefix.length)}`,
+      });
+    });
+
+    let oks = 0;
+    let errors = 0;
+    await processQueue(tasks, async (task) => {
+      this._log.info(`copy to ${task.dst}`);
+      try {
+        await this._s3.send(new CopyObjectCommand({
+          Bucket: this._bucket,
+          CopySource: `${this._bucket}/${task.src}`,
+          Key: task.dst,
+        }));
+        oks += 1;
+      } catch (e) {
+        this._log.warn(`error while copying ${task.dst}: ${e}`);
+        errors += 1;
+      }
+    }, 64);
+    this._log.info(`copied ${oks} files to ${dst} (${errors} errors)`);
+  }
+
+  async rmdir(src) {
+    this._log.info(`fetching list of files to delete from ${src}`);
+    const keys = await this.list(src.substring(1));
+
+    let oks = 0;
+    let errors = 0;
+    await processQueue(keys, async (Key) => {
+      this._log.info(`deleting ${Key}`);
+      try {
+        await this._s3.send(new DeleteObjectCommand({
+          Bucket: this._bucket,
+          Key,
+        }));
+        oks += 1;
+      } catch (e) {
+        this._log.warn(`error while deleting ${Key}: ${e.$metadata.httpStatusCode}`);
+        errors += 1;
+      }
+    }, 64);
+    this._log.info(`deleted ${oks} files (${errors} errors)`);
   }
 }
 
