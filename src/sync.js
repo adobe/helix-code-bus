@@ -56,19 +56,25 @@ async function sync(data, ctx) {
   const prefix = `/${data.owner}/${data.repo}/${data.ref}/`;
 
   await processQueue(changes, async (change) => {
-    log.info('fetching from github');
-    const res = await octokit.repos.getContent({
-      owner: data.owner,
-      repo: data.repo,
-      ref: data.ref,
-      path: change.path,
-    });
-    const body = Buffer.from(res.data.content, 'base64');
     const path = `${prefix}${change.path}`;
-    log.info('uploading ', path);
-    await storage.put(path, body, change.contentType, {
-      'x-commit-id': change.commit,
-    });
+
+    if (change.type === 'deleted') {
+      log.info('deleting ', path);
+      await storage.remove(path);
+    } else {
+      log.info('fetching from github');
+      const res = await octokit.repos.getContent({
+        owner: data.owner,
+        repo: data.repo,
+        ref: data.ref,
+        path: change.path,
+      });
+      const body = Buffer.from(res.data.content, 'base64');
+      log.info('uploading ', path);
+      await storage.put(path, body, change.contentType, {
+        'x-commit-id': change.commit,
+      });
+    }
   });
 }
 

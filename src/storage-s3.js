@@ -13,6 +13,7 @@
 const {
   S3Client,
   PutObjectCommand,
+  DeleteObjectCommand,
 } = require('@aws-sdk/client-s3');
 
 class StorageS3 {
@@ -50,7 +51,17 @@ class StorageS3 {
       Key: path.substring(1),
     };
     const result = await this._s3.send(new PutObjectCommand(input));
-    this._log.info(`Object uploaded to: ${input.Bucket}/${input.Key}`);
+    this._log.info(`object uploaded: ${input.Bucket}/${input.Key}`);
+    return result;
+  }
+
+  async remove(path) {
+    const input = {
+      Bucket: this._bucket,
+      Key: path.substring(1),
+    };
+    const result = await this._s3.send(new DeleteObjectCommand(input));
+    this._log.info(`object deleted: ${input.Bucket}/${input.Key}`);
     return result;
   }
 }
