@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Adobe. All rights reserved.
+ * Copyright 2021 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -14,6 +14,7 @@ const { cleanupHeaderValue } = require('@adobe/helix-shared-utils');
 const { logger } = require('@adobe/helix-universal-logger');
 const { wrap: status } = require('@adobe/helix-status');
 const { Response } = require('@adobe/helix-universal');
+const StorageS3 = require('./storage-s3.js');
 const sync = require('./sync.js');
 
 /**
@@ -48,11 +49,21 @@ async function main(req, ctx) {
         },
       });
     }
-    console.log(payload);
+    log.debug('processing events', payload);
 
+    // create storage
+    const {
+      AWS_S3_REGION, AWS_S3_ACCESS_KEY_ID, AWS_S3_SECRET_ACCESS_KEY,
+    } = ctx.env;
+    ctx.storage = new StorageS3({
+      AWS_S3_REGION,
+      AWS_S3_ACCESS_KEY_ID,
+      AWS_S3_SECRET_ACCESS_KEY,
+      log,
+    });
     ctx.env.GH_TOKEN = req.headers.get('x-github-token');
-    await sync(payload, ctx);
 
+    await sync(payload, ctx);
     return new Response('', {
       status: 204,
     });

@@ -1,0 +1,15 @@
+{
+  "type": "github",
+  "owner": "tripodsan",
+  "repo": "helix-test-private",
+  "ref": "new-branch",
+  "baseRef": "",
+  "changes": [
+    {
+      "path": "*",
+      "time": "now",
+      "type": "deleted"
+    }
+  ],
+  "installationId": 995843
+}
