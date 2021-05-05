@@ -24,7 +24,7 @@
     "memory": 512,
     "aws-role": "arn:aws:iam::118435662149:role/helix-service-role-s3-rw",
     "testUrl": "/_status_check/healthcheck.json",
-    "target" : "aws"
+    "target": "aws"
   },
   "repository": {
     "type": "git",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
-    "@adobe/helix-deploy": "4.3.0",
+    "@adobe/helix-deploy": "4.3.1",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/exec": "5.0.0",
     "@semantic-release/git": "9.0.0",

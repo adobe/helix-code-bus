@@ -18,7 +18,7 @@ async function sync(data, ctx) {
   const { log, env } = ctx;
   const {
     AWS_S3_REGION, AWS_S3_ACCESS_KEY_ID, AWS_S3_SECRET_ACCESS_KEY,
-    GH_APP_ID, GH_APP_PRIVATE_KEY, // , GH_CLIENT_ID, GH_CLIENT_SECRET,
+    // GH_APP_ID, GH_APP_PRIVATE_KEY, // , GH_CLIENT_ID, GH_CLIENT_SECRET,
     GH_TOKEN,
   } = env;
   const storage = new SyncS3({
