@@ -5,6 +5,8 @@
   "description": "Helix Code Bus",
   "main": "src/index.js",
   "scripts": {
+    "dev": "nodemon",
+    "start": "node ./test/dev/server.js",
     "test": " nyc mocha -i -g 'Post-Deploy'",
     "test-ci": "nyc mocha  -i -g 'Post-Deploy' --reporter xunit --reporter-options output=./junit/test-results.xml && codecov",
     "test-postdeploy": "mocha --reporter xunit --reporter-options output=./junit/test-results.xml -g 'Post-Deploy'",
@@ -13,13 +15,16 @@
     "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
     "commit": "git-cz",
     "build": "hedy -v",
-    "deploy": "hedy -v --deploy --test=/_status_check/healthcheck.json",
-    "deploy-sequences": "hedy --no-build -no-hints -l latest -l major -l minor",
-    "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci"
+    "deploy": "unset HLX_AWS_ROLE; hedy -v --deploy --test",
+    "deploy-sequences": "hedy --no-build -no-hints -l major -l minor",
+    "deploy-ci": "unset HLX_AWS_ROLE; hedy -v --deploy --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --test"
   },
   "wsk": {
     "name": "helix-services/code-bus@${version}",
-    "memory": 512
+    "memory": 512,
+    "awsRole": "arn:aws:iam::118435662149:role/helix-service-role-s3-rw",
+    "testUrl": "/_status_check/healthcheck.json",
+    "target": "aws"
   },
   "repository": {
     "type": "git",
@@ -32,14 +37,18 @@
   },
   "homepage": "https://github.com/adobe/helix-code-bus#readme",
   "dependencies": {
+    "@adobe/helix-shared-process-queue": "1.0.0",
+    "@adobe/helix-shared-utils": "1.0.3",
     "@adobe/helix-shared-wrap": "1.0.0",
     "@adobe/helix-status": "9.1.6",
     "@adobe/helix-universal": "1.4.0",
-    "@adobe/helix-universal-logger": "1.0.3"
+    "@adobe/helix-universal-logger": "1.0.3",
+    "@aws-sdk/client-s3": "3.14.0",
+    "@octokit/rest": "18.5.3"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
-    "@adobe/helix-deploy": "4.3.1",
+    "@adobe/helix-deploy": "4.4.0",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/exec": "5.0.0",
     "@semantic-release/git": "9.0.0",
@@ -56,6 +65,7 @@
     "junit-report-builder": "3.0.0",
     "lint-staged": "10.5.4",
     "mocha": "8.3.2",
+    "nodemon": "2.0.7",
     "nyc": "15.1.0",
     "proxyquire": "2.1.3",
     "semantic-release": "17.4.2"
@@ -70,5 +80,12 @@
     "ghooks": {
       "pre-commit": "npx lint-staged"
     }
+  },
+  "nodemonConfig": {
+    "exec": "npm start",
+    "watch": [
+      ".env",
+      "."
+    ]
   }
 }
