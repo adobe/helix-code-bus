@@ -22,12 +22,24 @@ async function sync(data, ctx) {
   });
 
   const { changes } = data;
+  const prefix = `/${data.owner}/${data.repo}/${data.ref}/`;
+
   if (changes.length === 1 && changes[0].path === '*') {
-    log.warn('create/delete branch not supported yet');
+    if (changes[0].type === 'deleted') {
+      if (data.ref === 'main' || data.ref === 'master') {
+        log.warn(`cowardly refusing to delete potential default branch: ${prefix}`);
+        return;
+      }
+      await storage.rmdir(prefix);
+      return;
+    }
+    if (!data.baseRef) {
+      log.warn(`create branch w/o base ref not supported yet: ${prefix}`);
+      return;
+    }
+    await storage.copy(`/${data.owner}/${data.repo}/${data.baseRef}/`, prefix);
     return;
   }
-
-  const prefix = `/${data.owner}/${data.repo}/${data.ref}/`;
 
   await processQueue(changes, async (change) => {
     const path = `${prefix}${change.path}`;
