@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/adobe/helix-code-bus/compare/v1.0.1...v1.1.0) (2021-05-06)
+
+
+### Features
+
+* **s3:** implement branch create and delete ([#8](https://github.com/adobe/helix-code-bus/issues/8)) ([3c088e4](https://github.com/adobe/helix-code-bus/commit/3c088e4f3336de962e14c8495ee0cae2f8db7d54)), closes [#5](https://github.com/adobe/helix-code-bus/issues/5) [#6](https://github.com/adobe/helix-code-bus/issues/6)
+
 ## [1.0.1](https://github.com/adobe/helix-code-bus/compare/v1.0.0...v1.0.1) (2021-05-05)
 
 
