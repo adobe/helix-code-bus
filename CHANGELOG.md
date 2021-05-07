@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/adobe/helix-code-bus/compare/v1.1.0...v1.1.1) (2021-05-07)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-universal to v1.5.0 ([142ac6d](https://github.com/adobe/helix-code-bus/commit/142ac6d21d54ce1a39ba5770ac4fb499ca912cf2))
+
 # [1.1.0](https://github.com/adobe/helix-code-bus/compare/v1.0.1...v1.1.0) (2021-05-06)
 
 
