@@ -16,7 +16,12 @@ const assert = require('assert');
 const fs = require('fs').promises;
 const path = require('path');
 const nock = require('nock');
+const { promisify } = require('util');
+const zlib = require('zlib');
+
 const StorageS3 = require('../src/storage-s3.js');
+
+const gzip = promisify(zlib.gzip);
 
 const AWS_S3_REGION = 'fake';
 const AWS_S3_ACCESS_KEY_ID = 'fake';
@@ -32,9 +37,9 @@ describe('Storage S3 test', () => {
     const reqs = {};
     const scope = nock('https://helix-code-bus.s3.fake.amazonaws.com')
       .put('/foo?x-id=PutObject')
-      .reply(function cb(uri, body) {
+      .reply(function cb(uri) {
         reqs[uri] = {
-          body,
+          body: Buffer.concat(this.req.requestBodyBuffers),
           headers: Object.fromEntries(Object.entries(this.req.headers)
             .filter((key) => TEST_HEADERS.indexOf(key) >= 0)),
         };
@@ -53,7 +58,7 @@ describe('Storage S3 test', () => {
 
     assert.deepEqual(reqs, {
       '/foo?x-id=PutObject': {
-        body: 'hello, world.',
+        body: await gzip(Buffer.from('hello, world.', 'utf-8')),
         headers: {},
       },
     });
