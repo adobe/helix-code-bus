@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+const { promisify } = require('util');
+const zlib = require('zlib');
 const {
   S3Client,
   PutObjectCommand,
@@ -18,6 +20,8 @@ const {
   ListObjectsV2Command,
 } = require('@aws-sdk/client-s3');
 const processQueue = require('@adobe/helix-shared-process-queue');
+
+const gzip = promisify(zlib.gzip);
 
 class StorageS3 {
   constructor(opts) {
@@ -46,10 +50,12 @@ class StorageS3 {
   }
 
   async put(path, body, contentType, meta) {
+    const zipped = await gzip(body);
     const input = {
-      Body: body,
+      Body: zipped,
       Bucket: this._bucket,
       ContentType: contentType,
+      ContentEncoding: 'gzip',
       Metadata: meta,
       Key: path.substring(1),
     };
