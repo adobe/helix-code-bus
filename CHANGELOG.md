@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/adobe/helix-code-bus/compare/v1.1.1...v1.1.2) (2021-05-09)
+
+
+### Bug Fixes
+
+* **s3:** use gzip content-encoding ([#14](https://github.com/adobe/helix-code-bus/issues/14)) ([7442972](https://github.com/adobe/helix-code-bus/commit/7442972666935100d30b9ed40b80c7abcbe5777e)), closes [#12](https://github.com/adobe/helix-code-bus/issues/12)
+
 ## [1.1.1](https://github.com/adobe/helix-code-bus/compare/v1.1.0...v1.1.1) (2021-05-07)
 
 
