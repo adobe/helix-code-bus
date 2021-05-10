@@ -51,11 +51,15 @@ describe('Sync test', () => {
       .get('/repos/tripodsan/helix-test-private/contents/new-file.txt?ref=master')
       .reply(200, {
         content: Buffer.from('hello, world').toString('base64'),
+        encoding: 'base64',
       })
       .get('/repos/tripodsan/helix-test-private/contents/README.md?ref=master')
       .reply(200, {
         content: Buffer.from('hello, world').toString('base64'),
-      });
+        encoding: 'base64',
+      })
+      .get('/repos/tripodsan/helix-test-private/contents/fail.md?ref=master')
+      .reply(502, 'timeout');
 
     const storage = new MockStorageS3();
     const events = JSON.parse(await fs.readFile(path.resolve(__dirname, 'fixtures', 'events.json'), 'utf-8'));
@@ -92,6 +96,13 @@ describe('Sync test', () => {
   });
 
   it('handles branch creation', async () => {
+    const scope = nock('https://api.github.com')
+      .get('/repos/tripodsan/helix-test-private/contents/foo.md?ref=new-branch')
+      .reply(200, {
+        content: Buffer.from('hello, world').toString('base64'),
+        encoding: 'base64',
+      });
+
     const storage = new MockStorageS3();
     const events = JSON.parse(await fs.readFile(path.resolve(__dirname, 'fixtures', 'events-branch-created.json'), 'utf-8'));
     await sync(events, {
@@ -102,12 +113,21 @@ describe('Sync test', () => {
       storage,
     });
 
-    assert.deepEqual(storage.added, []);
+    assert.deepEqual(storage.added, [{
+      body: 'hello, world',
+      contentType: 'text/markdown; charset=utf-8',
+      filePath: '/tripodsan/helix-test-private/new-branch/foo.md',
+      meta: {
+        'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
+      },
+    }]);
     assert.deepEqual(storage.removed, []);
     assert.deepEqual(storage.copys, [{
       dst: '/tripodsan/helix-test-private/new-branch/',
       src: '/tripodsan/helix-test-private/master/',
     }]);
+
+    await scope.done();
   });
 
   it('handles branch creation with no base ref', async () => {

@@ -21,42 +21,59 @@ async function sync(data, ctx) {
     log,
   });
 
-  const { changes } = data;
+  // check for branch delete or create
+  let branchOp;
+  const changes = data.changes.filter((change) => {
+    if (change.path === '*') {
+      branchOp = change;
+      return false;
+    }
+    return true;
+  });
+
   const prefix = `/${data.owner}/${data.repo}/${data.ref}/`;
 
-  if (changes.length === 1 && changes[0].path === '*') {
-    if (changes[0].type === 'deleted') {
-      if (data.ref === 'main' || data.ref === 'master') {
-        log.warn(`cowardly refusing to delete potential default branch: ${prefix}`);
-        return;
-      }
-      await storage.rmdir(prefix);
+  // handle branch delete
+  if (branchOp && branchOp.type === 'deleted') {
+    if (data.ref === 'main' || data.ref === 'master') {
+      log.error(`cowardly refusing to delete potential default branch: ${prefix}`);
       return;
     }
+    await storage.rmdir(prefix);
+    return;
+  }
+
+  // handle branch create
+  if (branchOp) {
     if (!data.baseRef) {
-      log.warn(`create branch w/o base ref not supported yet: ${prefix}`);
+      log.error(`not base ref for new branch: ${prefix}`);
       return;
     }
     await storage.copy(`/${data.owner}/${data.repo}/${data.baseRef}/`, prefix);
-    return;
   }
 
   await processQueue(changes, async (change) => {
     const path = `${prefix}${change.path}`;
 
     if (change.type === 'deleted') {
-      log.info('deleting ', path);
+      log.info('deleting', path);
       await storage.remove(path);
     } else {
-      log.info('fetching from github');
-      const res = await octokit.repos.getContent({
-        owner: data.owner,
-        repo: data.repo,
-        ref: data.ref,
-        path: change.path,
-      });
-      const body = Buffer.from(res.data.content, 'base64');
-      log.info('uploading ', path);
+      let body;
+      try {
+        log.info('fetching from github', path);
+        const res = await octokit.repos.getContent({
+          owner: data.owner,
+          repo: data.repo,
+          ref: data.ref,
+          path: change.path,
+        });
+        body = Buffer.from(res.data.content, res.data.encoding);
+      } catch (e) {
+        log.error(`fetching from github error: ${e.message}`);
+        return;
+      }
+      log.info('uploading', path);
       await storage.put(path, body, change.contentType, {
         'x-commit-id': change.commit,
       });
