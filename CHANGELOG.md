@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/adobe/helix-code-bus/compare/v1.1.2...v1.1.3) (2021-05-10)
+
+
+### Bug Fixes
+
+* **sync:** handle branch create and modificatio correctly ([#15](https://github.com/adobe/helix-code-bus/issues/15)) ([29b5614](https://github.com/adobe/helix-code-bus/commit/29b5614ced70f36a9505f0cfc83f976f65947001))
+
 ## [1.1.2](https://github.com/adobe/helix-code-bus/compare/v1.1.1...v1.1.2) (2021-05-09)
 
 
