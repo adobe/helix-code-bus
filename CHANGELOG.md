@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/adobe/helix-code-bus/compare/v1.1.4...v1.1.5) (2021-05-19)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-status to v9.1.7 ([#22](https://github.com/adobe/helix-code-bus/issues/22)) ([c8c890f](https://github.com/adobe/helix-code-bus/commit/c8c890fbd1427fb0367159ff4d792f7d1edc362a))
+
 ## [1.1.4](https://github.com/adobe/helix-code-bus/compare/v1.1.3...v1.1.4) (2021-05-17)
 
 
