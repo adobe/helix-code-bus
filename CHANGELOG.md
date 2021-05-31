@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/adobe/helix-code-bus/compare/v1.1.5...v1.1.6) (2021-05-31)
+
+
+### Bug Fixes
+
+* **deps:** update external fixes ([#28](https://github.com/adobe/helix-code-bus/issues/28)) ([56e55ed](https://github.com/adobe/helix-code-bus/commit/56e55ed41004db5b9c4df590f85e00b0c67d9bba))
+
 ## [1.1.5](https://github.com/adobe/helix-code-bus/compare/v1.1.4...v1.1.5) (2021-05-19)
 
 
