@@ -78,7 +78,6 @@ jobs:
           statuspage_name: Helix Code Bus
           statuspage_group: Development
           newrelic_group_policy: Development Repeated Failure
-          newrelic_group_targets: aws, google
           incubator: true # remove only when promoting service to production
 
   branch-deploy:
