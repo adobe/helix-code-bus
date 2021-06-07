@@ -29,7 +29,7 @@ declare interface Change {
   type: ChangeType,
 
   /**
-   * Relative path of changed resource
+   * Relative path of changed resource or `*` if this as a branch event.
    */
   path: string,
 
