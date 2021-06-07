@@ -46,7 +46,7 @@ class MockStorageS3 {
 }
 
 describe('Sync test', () => {
-  it('call storage to events', async () => {
+  it('call storage for events', async () => {
     const scope = nock('https://api.github.com')
       .get('/repos/tripodsan/helix-test-private/contents/new-file.txt?ref=master')
       .reply(200, {
@@ -92,6 +92,100 @@ describe('Sync test', () => {
     ]);
     assert.deepEqual(storage.removed, [
       '/tripodsan/helix-test-private/master/src/html.htl',
+    ]);
+  });
+
+  it('call storage for events with config', async () => {
+    const scope = nock('https://api.github.com')
+      .get('/repos/tripodsan/helix-test-private/contents/fstab.yaml?ref=master')
+      .reply(200, {
+        content: Buffer.from('mountpoints:\n  /: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog\n').toString('base64'),
+        encoding: 'base64',
+      })
+      .get('/repos/tripodsan/helix-test-private/contents/head.html?ref=master')
+      .reply(200, {
+        content: Buffer.from('<link rel="stylesheet" href="/style/v2/style.css"/>').toString('base64'),
+        encoding: 'base64',
+      })
+      .get('/repos/tripodsan/helix-test-private/contents/helix-redirects.yaml?ref=master')
+      .reply(404)
+      .get('/repos/tripodsan/helix-test-private/contents/helix-query.yaml?ref=master')
+      .reply(404);
+
+    const storage = new MockStorageS3();
+    const events = JSON.parse(await fs.readFile(path.resolve(__dirname, 'fixtures', 'events-with-config.json'), 'utf-8'));
+    await sync(events, {
+      log: console,
+      env: {
+        GH_TOKEN: 'fake',
+      },
+      storage,
+    });
+    await scope.done();
+
+    assert.deepEqual(storage.added, [
+      {
+        body: 'mountpoints:\n  /: https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog\n',
+        contentType: 'text/plain; charset=utf-8',
+        filePath: '/tripodsan/helix-test-private/master/fstab.yaml',
+        meta: {
+          'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
+        },
+      },
+      {
+        body: '{\n  "head": {\n    "html": "<link rel=\\"stylesheet\\" href=\\"/style/v2/style.css\\"/>"\n  },\n  "fstab": {\n    "mountpoints": {\n      "/": "https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog"\n    }\n  }\n}',
+        contentType: 'application/json',
+        filePath: '/helix-config.json',
+        meta: {
+          'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
+        },
+      },
+    ]);
+    assert.deepEqual(storage.removed, [
+      '/tripodsan/helix-test-private/master/helix-markup.yaml',
+    ]);
+  });
+
+  it('call storage for events with config with errors', async () => {
+    const scope = nock('https://api.github.com')
+      .get('/repos/tripodsan/helix-test-private/contents/fstab.yaml?ref=master')
+      .reply(200, {
+        content: Buffer.from('foobar\n').toString('base64'),
+        encoding: 'base64',
+      })
+      .get('/repos/tripodsan/helix-test-private/contents/head.html?ref=master')
+      .reply(200, {
+        content: Buffer.from('<link rel="stylesheet" href="/style/v2/style.css"/>').toString('base64'),
+        encoding: 'base64',
+      })
+      .get('/repos/tripodsan/helix-test-private/contents/helix-redirects.yaml?ref=master')
+      .reply(404)
+      .get('/repos/tripodsan/helix-test-private/contents/helix-query.yaml?ref=master')
+      .reply(404);
+
+    const storage = new MockStorageS3();
+    const events = JSON.parse(await fs.readFile(path.resolve(__dirname, 'fixtures', 'events-with-config.json'), 'utf-8'));
+    await sync(events, {
+      log: console,
+      env: {
+        GH_TOKEN: 'fake',
+      },
+      storage,
+    });
+    await scope.done();
+
+    assert.deepEqual(storage.added, [
+      {
+        body: 'foobar\n',
+        contentType: 'text/plain; charset=utf-8',
+        filePath: '/tripodsan/helix-test-private/master/fstab.yaml',
+        meta: {
+          'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
+        },
+      },
+    ]);
+    assert.deepEqual(storage.removed, [
+      '/tripodsan/helix-test-private/master/helix-markup.yaml',
     ]);
   });
 

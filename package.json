@@ -37,6 +37,7 @@
   },
   "homepage": "https://github.com/adobe/helix-code-bus#readme",
   "dependencies": {
+    "@adobe/helix-shared-config": "1.1.4",
     "@adobe/helix-shared-process-queue": "1.0.0",
     "@adobe/helix-shared-utils": "1.0.3",
     "@adobe/helix-shared-wrap": "1.0.0",
