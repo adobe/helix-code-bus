@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/adobe/helix-code-bus/compare/v1.2.0...v1.2.1) (2021-06-08)
+
+
+### Bug Fixes
+
+* use correct config path ([#39](https://github.com/adobe/helix-code-bus/issues/39)) ([c0c7698](https://github.com/adobe/helix-code-bus/commit/c0c7698219278e5d25ee93964c0c3e1897b85051))
+
 # [1.2.0](https://github.com/adobe/helix-code-bus/compare/v1.1.9...v1.2.0) (2021-06-08)
 
 
