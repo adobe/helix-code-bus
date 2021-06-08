@@ -129,8 +129,9 @@ async function sync(data, ctx) {
   if (configChanges) {
     try {
       const body = JSON.stringify(await aggregate(log, configChanges), null, 2);
-      log.info('uploading', CONFIG_PATH);
-      await storage.put(CONFIG_PATH, body, 'application/json', {
+      const path = `${prefix}${CONFIG_PATH}`;
+      log.info('uploading', path);
+      await storage.put(path, body, 'application/json', {
         'x-commit-id': configSha,
       });
     } catch (e) {
