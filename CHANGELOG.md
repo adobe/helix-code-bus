@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/adobe/helix-code-bus/compare/v1.1.9...v1.2.0) (2021-06-08)
+
+
+### Features
+
+* generate helix-config.json ([#35](https://github.com/adobe/helix-code-bus/issues/35)) ([2d1d7b8](https://github.com/adobe/helix-code-bus/commit/2d1d7b8b2f096317a588bf111a3949f72d4d4edb)), closes [#7](https://github.com/adobe/helix-code-bus/issues/7)
+
 ## [1.1.9](https://github.com/adobe/helix-code-bus/compare/v1.1.8...v1.1.9) (2021-06-06)
 
 
