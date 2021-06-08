@@ -94,12 +94,16 @@ async function sync(data, ctx) {
     async (change) => {
       const path = `${prefix}${change.path}`;
       if (change.type === 'deleted') {
-        log.info('deleting', path);
-        await storage.remove(path);
+        try {
+          log.info(`removing ${path} from storage`);
+          await storage.remove(path);
+        } catch (e) {
+          log.error(`removing ${path} from storage failed: ${e.message}`);
+        }
       } else {
         let body;
         try {
-          log.info('fetching from github', path);
+          log.info(`fetching ${path} from github`);
           const res = await octokit.repos.getContent({
             owner: data.owner,
             repo: data.repo,
@@ -108,7 +112,11 @@ async function sync(data, ctx) {
           });
           body = Buffer.from(res.data.content, res.data.encoding);
         } catch (e) {
-          log.error(`fetching from github error: ${e.message}`);
+          if (change.type === 'nop') {
+            log.info(`fetching ${path} from github failed: ${e.message}`);
+            return;
+          }
+          log.error(`fetching ${path} from github error: ${e.message}`);
           return;
         }
         // retain data for config
@@ -117,10 +125,14 @@ async function sync(data, ctx) {
           change.data = body;
         }
         if (change.type !== 'nop') {
-          log.info('uploading', path);
-          await storage.put(path, body, change.contentType, {
-            'x-commit-id': change.commit,
-          });
+          try {
+            log.info(`uploading ${path} to storage`);
+            await storage.put(path, body, change.contentType, {
+              'x-commit-id': change.commit,
+            });
+          } catch (e) {
+            log.error(`uploading ${path} to storage failed: ${e.message}`);
+          }
         }
       }
     });

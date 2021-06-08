@@ -27,12 +27,18 @@ class MockStorageS3 {
   }
 
   async put(filePath, body, contentType, meta) {
+    if (filePath.indexOf('/fail/') >= 0) {
+      throw new Error('put error');
+    }
     this.added.push({
       filePath, body: body.toString('utf-8'), contentType, meta,
     });
   }
 
   async remove(filePath) {
+    if (filePath.indexOf('/fail/') >= 0) {
+      throw new Error('remove error');
+    }
     this.removed.push(filePath);
   }
 
@@ -93,6 +99,34 @@ describe('Sync test', () => {
     assert.deepEqual(storage.removed, [
       '/tripodsan/helix-test-private/master/src/html.htl',
     ]);
+  });
+
+  it('call storage fails for events', async () => {
+    const scope = nock('https://api.github.com')
+      .get('/repos/tripodsan/helix-test-private/contents/fail%2Fnew-file.txt?ref=master')
+      .reply(200, {
+        content: Buffer.from('hello, world').toString('base64'),
+        encoding: 'base64',
+      })
+      .get('/repos/tripodsan/helix-test-private/contents/fail%2FREADME.md?ref=master')
+      .reply(200, {
+        content: Buffer.from('hello, world').toString('base64'),
+        encoding: 'base64',
+      });
+
+    const storage = new MockStorageS3();
+    const events = JSON.parse(await fs.readFile(path.resolve(__dirname, 'fixtures', 'events-with-failed.json'), 'utf-8'));
+    await sync(events, {
+      log: console,
+      env: {
+        GH_TOKEN: 'fake',
+      },
+      storage,
+    });
+    await scope.done();
+
+    assert.deepEqual(storage.added, []);
+    assert.deepEqual(storage.removed, []);
   });
 
   it('call storage for events with config', async () => {
