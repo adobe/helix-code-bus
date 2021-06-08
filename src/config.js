@@ -77,7 +77,7 @@ const CONFIG_FILES = {
  * Path of the aggregate config
  * @type {string}
  */
-const CONFIG_PATH = '/helix-config.json';
+const CONFIG_PATH = 'helix-config.json';
 
 /**
  * Creates and aggregate of the configurations in the given changes object.
