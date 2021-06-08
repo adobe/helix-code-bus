@@ -1,0 +1,891 @@
+{
+  "head": {
+    "html": "<link rel=\"stylesheet\" href=\"/style/v2/style.css\"/>\n<script src=\"/scripts/v2/scripts.js\" defer></script>\n<script src=\"/scripts/v2/common.js\" type=\"module\"></script>\n\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/>\n\n<meta name=\"google-site-verification\" content=\"YD_ublu5NDiQWLZhQC5N-7eL-zo0TFpPS-l9vFqgdSI\"/>\n<meta property=\"article:publisher\" content=\"https://www.facebook.com/Adobe\"/>\n<meta property=\"og:type\" content=\"article\"/>\n<meta property=\"og:site_name\" content=\"Adobe Blog\"/>\n<meta name=\"twitter:site\" content=\"@Adobe\"/>\n<meta name=\"twitter:creator\" content=\"@Adobe\"/>\n<meta name=\"twitter:card\" content=\"summary_large_image\"/>\n<meta name=\"serp-content-type\" content=\"blog\"/>\n<link rel=\"publisher\" href=\"https://www.facebook.com/Adobe\"/>\n\n<link rel=\"icon\" type=\"image/svg+xml\" href=\"/icons/adobe.svg\"/>\n<link rel=\"alternate icon\" href=\"https://www.adobe.com/favicon.ico\"/>\n<link rel=\"apple-touch-icon\" href=\"/icons/apple-touch-icon.png\"/>\n<link rel=\"apple-touch-icon\" sizes=\"120x120\" href=\"/icons/apple-touch-icon-120x120.png\"/>\n<link rel=\"apple-touch-icon\" sizes=\"152x152\" href=\"/icons/apple-touch-icon-152x152.png\"/>\n<link rel=\"apple-touch-icon\" sizes=\"167x167\" href=\"/icons/apple-touch-icon-167x167.png\"/>\n<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/icons/apple-touch-icon-180x180.png\"/>\n<link rel=\"apple-touch-icon-precomposed\" href=\"/icons/apple-touch-icon-precomposed.png\"/>\n"
+  },
+  "fstab": {
+    "mountpoints": {
+      "/": "https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog"
+    }
+  },
+  "index": {
+    "version": 1,
+    "indices": {
+      "english": {
+        "source": "html",
+        "fetch": "https://{repo}--{owner}.hlx.page/{path}",
+        "include": [
+          "en/publish/*/*/*/*.(md|docx)"
+        ],
+        "exclude": [
+          "**/Document.*"
+        ],
+        "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/en/query-index.xlsx?d=w9b11cf8528564434a5363b1c13699d0f&csf=1&web=1&e=crkaXh",
+        "sitemap": "en/query-index.json",
+        "properties": {
+          "author": {
+            "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+            "value": "match(el, '[bB]y (.*)')\n"
+          },
+          "title": {
+            "select": "main > div > h1:first-of-type",
+            "value": "textContent(el)\n"
+          },
+          "date": {
+            "select": "main > div:nth-of-type(3)",
+            "value": "parseTimestamp(el, '[POSTED ON] MM-DD-YYYY')\n"
+          },
+          "topics": {
+            "select": "main > div:last-of-type > p:first-of-type",
+            "values": "match(el, '(Topics: )? ([^,]+)')\n"
+          },
+          "products": {
+            "select": "main > div:last-of-type > p:nth-of-type(2)",
+            "values": "match(el, '(Products: )? ([^,]+)')\n"
+          },
+          "hero": {
+            "select": "main > div:nth-of-type(2) img:first-of-type",
+            "value": "attribute(el, 'src')\n"
+          },
+          "teaser": {
+            "select": "main > div:nth-child(n+4):not(:last-child) p",
+            "value": "words(textContent(el), 0, 20)\n"
+          },
+          "sourceHash": {
+            "select": "head > meta[name=x-source-hash",
+            "value": "attribute(el, 'content')\n"
+          },
+          "external-path": {
+            "select": "none",
+            "value": "replace(path, '/publish/', '/')\n"
+          }
+        },
+        "queries": {
+          "recent": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date}\n",
+            "cache": 600
+          },
+          "recent-by-author": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "author"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND author:\"${author}\"\n",
+            "cache": 600
+          },
+          "recent-by-topic": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "topic"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND topics:\"${topic}\"\n",
+            "cache": 600
+          }
+        },
+        "name": "english"
+      },
+      "german": {
+        "source": "html",
+        "fetch": "https://{repo}--{owner}.hlx.page/{path}",
+        "include": [
+          "de/publish/*/*/*/*.(md|docx)"
+        ],
+        "exclude": [
+          "**/Document.*"
+        ],
+        "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/de/query-index.xlsx?d=w7e4e8437735540cf9a632f486c42c865&csf=1&web=1&e=w3EocR",
+        "sitemap": "en/query-index.json",
+        "properties": {
+          "author": {
+            "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+            "value": "match(el, '[bB]y (.*)')\n"
+          },
+          "title": {
+            "select": "main > div > h1:first-of-type",
+            "value": "textContent(el)\n"
+          },
+          "date": {
+            "select": "main > div:nth-of-type(3)",
+            "value": "parseTimestamp(el, '[POSTED ON] MM-DD-YYYY')\n"
+          },
+          "topics": {
+            "select": "main > div:last-of-type > p:first-of-type",
+            "values": "match(el, '(Topics: )? ([^,]+)')\n"
+          },
+          "products": {
+            "select": "main > div:last-of-type > p:nth-of-type(2)",
+            "values": "match(el, '(Products: )? ([^,]+)')\n"
+          },
+          "hero": {
+            "select": "main > div:nth-of-type(2) img:first-of-type",
+            "value": "attribute(el, 'src')\n"
+          },
+          "teaser": {
+            "select": "main > div:nth-child(n+4):not(:last-child) p",
+            "value": "words(textContent(el), 0, 20)\n"
+          },
+          "sourceHash": {
+            "select": "head > meta[name=x-source-hash",
+            "value": "attribute(el, 'content')\n"
+          },
+          "external-path": {
+            "select": "none",
+            "value": "replace(path, '/publish/', '/')\n"
+          }
+        },
+        "queries": {
+          "recent": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date}\n",
+            "cache": 600
+          },
+          "recent-by-author": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "author"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND author:\"${author}\"\n",
+            "cache": 600
+          },
+          "recent-by-topic": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "topic"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND topics:\"${topic}\"\n",
+            "cache": 600
+          }
+        },
+        "name": "german"
+      },
+      "korean": {
+        "source": "html",
+        "fetch": "https://{repo}--{owner}.hlx.page/{path}",
+        "include": [
+          "ko/publish/*/*/*/*.(md|docx)"
+        ],
+        "exclude": [
+          "**/Document.*"
+        ],
+        "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/ko/query-index.xlsx?d=wd29a640f97104e3b8ece1d5b89aba0be&csf=1&web=1&e=K3fruX",
+        "sitemap": "en/query-index.json",
+        "properties": {
+          "author": {
+            "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+            "value": "match(el, '[bB]y (.*)')\n"
+          },
+          "title": {
+            "select": "main > div > h1:first-of-type",
+            "value": "textContent(el)\n"
+          },
+          "date": {
+            "select": "main > div:nth-of-type(3)",
+            "value": "parseTimestamp(el, '[POSTED ON] MM-DD-YYYY')\n"
+          },
+          "topics": {
+            "select": "main > div:last-of-type > p:first-of-type",
+            "values": "match(el, '(Topics: )? ([^,]+)')\n"
+          },
+          "products": {
+            "select": "main > div:last-of-type > p:nth-of-type(2)",
+            "values": "match(el, '(Products: )? ([^,]+)')\n"
+          },
+          "hero": {
+            "select": "main > div:nth-of-type(2) img:first-of-type",
+            "value": "attribute(el, 'src')\n"
+          },
+          "teaser": {
+            "select": "main > div:nth-child(n+4):not(:last-child) p",
+            "value": "words(textContent(el), 0, 20)\n"
+          },
+          "sourceHash": {
+            "select": "head > meta[name=x-source-hash",
+            "value": "attribute(el, 'content')\n"
+          },
+          "external-path": {
+            "select": "none",
+            "value": "replace(path, '/publish/', '/')\n"
+          }
+        },
+        "queries": {
+          "recent": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date}\n",
+            "cache": 600
+          },
+          "recent-by-author": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "author"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND author:\"${author}\"\n",
+            "cache": 600
+          },
+          "recent-by-topic": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "topic"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND topics:\"${topic}\"\n",
+            "cache": 600
+          }
+        },
+        "name": "korean"
+      },
+      "french": {
+        "source": "html",
+        "fetch": "https://{repo}--{owner}.hlx.page/{path}",
+        "include": [
+          "fr/publish/*/*/*/*.(md|docx)"
+        ],
+        "exclude": [
+          "**/Document.*"
+        ],
+        "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/fr/query-index.xlsx?d=w0e8a21f8b55d4bd48088556c67f95bd4&csf=1&web=1&e=6RuhWr",
+        "sitemap": "en/query-index.json",
+        "properties": {
+          "author": {
+            "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+            "value": "match(el, '[bB]y (.*)')\n"
+          },
+          "title": {
+            "select": "main > div > h1:first-of-type",
+            "value": "textContent(el)\n"
+          },
+          "date": {
+            "select": "main > div:nth-of-type(3)",
+            "value": "parseTimestamp(el, '[POSTED ON] MM-DD-YYYY')\n"
+          },
+          "topics": {
+            "select": "main > div:last-of-type > p:first-of-type",
+            "values": "match(el, '(Topics: )? ([^,]+)')\n"
+          },
+          "products": {
+            "select": "main > div:last-of-type > p:nth-of-type(2)",
+            "values": "match(el, '(Products: )? ([^,]+)')\n"
+          },
+          "hero": {
+            "select": "main > div:nth-of-type(2) img:first-of-type",
+            "value": "attribute(el, 'src')\n"
+          },
+          "teaser": {
+            "select": "main > div:nth-child(n+4):not(:last-child) p",
+            "value": "words(textContent(el), 0, 20)\n"
+          },
+          "sourceHash": {
+            "select": "head > meta[name=x-source-hash",
+            "value": "attribute(el, 'content')\n"
+          },
+          "external-path": {
+            "select": "none",
+            "value": "replace(path, '/publish/', '/')\n"
+          }
+        },
+        "queries": {
+          "recent": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date}\n",
+            "cache": 600
+          },
+          "recent-by-author": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "author"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND author:\"${author}\"\n",
+            "cache": 600
+          },
+          "recent-by-topic": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "topic"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND topics:\"${topic}\"\n",
+            "cache": 600
+          }
+        },
+        "name": "french"
+      },
+      "italian": {
+        "source": "html",
+        "fetch": "https://{repo}--{owner}.hlx.page/{path}",
+        "include": [
+          "it/publish/*/*/*/*.(md|docx)"
+        ],
+        "exclude": [
+          "**/Document.*"
+        ],
+        "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/it/query-index.xlsx?d=we2fbc2b08a164958a41bb61f776f3aac&csf=1&web=1&e=k1f9uS",
+        "sitemap": "en/query-index.json",
+        "properties": {
+          "author": {
+            "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+            "value": "match(el, '[bB]y (.*)')\n"
+          },
+          "title": {
+            "select": "main > div > h1:first-of-type",
+            "value": "textContent(el)\n"
+          },
+          "date": {
+            "select": "main > div:nth-of-type(3)",
+            "value": "parseTimestamp(el, '[POSTED ON] MM-DD-YYYY')\n"
+          },
+          "topics": {
+            "select": "main > div:last-of-type > p:first-of-type",
+            "values": "match(el, '(Topics: )? ([^,]+)')\n"
+          },
+          "products": {
+            "select": "main > div:last-of-type > p:nth-of-type(2)",
+            "values": "match(el, '(Products: )? ([^,]+)')\n"
+          },
+          "hero": {
+            "select": "main > div:nth-of-type(2) img:first-of-type",
+            "value": "attribute(el, 'src')\n"
+          },
+          "teaser": {
+            "select": "main > div:nth-child(n+4):not(:last-child) p",
+            "value": "words(textContent(el), 0, 20)\n"
+          },
+          "sourceHash": {
+            "select": "head > meta[name=x-source-hash",
+            "value": "attribute(el, 'content')\n"
+          },
+          "external-path": {
+            "select": "none",
+            "value": "replace(path, '/publish/', '/')\n"
+          }
+        },
+        "queries": {
+          "recent": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date}\n",
+            "cache": 600
+          },
+          "recent-by-author": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "author"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND author:\"${author}\"\n",
+            "cache": 600
+          },
+          "recent-by-topic": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "topic"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND topics:\"${topic}\"\n",
+            "cache": 600
+          }
+        },
+        "name": "italian"
+      },
+      "spanish": {
+        "source": "html",
+        "fetch": "https://{repo}--{owner}.hlx.page/{path}",
+        "include": [
+          "es/publish/*/*/*/*.(md|docx)"
+        ],
+        "exclude": [
+          "**/Document.*"
+        ],
+        "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/es/query-index.xlsx?d=w89b84177df3b4d0d8f5e54a8390e7bb8&csf=1&web=1&e=qLQZny",
+        "sitemap": "en/query-index.json",
+        "properties": {
+          "author": {
+            "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+            "value": "match(el, '[bB]y (.*)')\n"
+          },
+          "title": {
+            "select": "main > div > h1:first-of-type",
+            "value": "textContent(el)\n"
+          },
+          "date": {
+            "select": "main > div:nth-of-type(3)",
+            "value": "parseTimestamp(el, '[POSTED ON] MM-DD-YYYY')\n"
+          },
+          "topics": {
+            "select": "main > div:last-of-type > p:first-of-type",
+            "values": "match(el, '(Topics: )? ([^,]+)')\n"
+          },
+          "products": {
+            "select": "main > div:last-of-type > p:nth-of-type(2)",
+            "values": "match(el, '(Products: )? ([^,]+)')\n"
+          },
+          "hero": {
+            "select": "main > div:nth-of-type(2) img:first-of-type",
+            "value": "attribute(el, 'src')\n"
+          },
+          "teaser": {
+            "select": "main > div:nth-child(n+4):not(:last-child) p",
+            "value": "words(textContent(el), 0, 20)\n"
+          },
+          "sourceHash": {
+            "select": "head > meta[name=x-source-hash",
+            "value": "attribute(el, 'content')\n"
+          },
+          "external-path": {
+            "select": "none",
+            "value": "replace(path, '/publish/', '/')\n"
+          }
+        },
+        "queries": {
+          "recent": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date}\n",
+            "cache": 600
+          },
+          "recent-by-author": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "author"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND author:\"${author}\"\n",
+            "cache": 600
+          },
+          "recent-by-topic": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "topic"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND topics:\"${topic}\"\n",
+            "cache": 600
+          }
+        },
+        "name": "spanish"
+      },
+      "japanese": {
+        "source": "html",
+        "fetch": "https://{repo}--{owner}.hlx.page/{path}",
+        "include": [
+          "jp/publish/*/*/*/*.(md|docx)"
+        ],
+        "exclude": [
+          "**/Document.*"
+        ],
+        "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/jp/query-index.xlsx?d=wc6a419a78b334addbd61c92845a7d223&csf=1&web=1&e=60wq5c",
+        "sitemap": "en/query-index.json",
+        "properties": {
+          "author": {
+            "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+            "value": "match(el, '[bB]y (.*)')\n"
+          },
+          "title": {
+            "select": "main > div > h1:first-of-type",
+            "value": "textContent(el)\n"
+          },
+          "date": {
+            "select": "main > div:nth-of-type(3)",
+            "value": "parseTimestamp(el, '[POSTED ON] MM-DD-YYYY')\n"
+          },
+          "topics": {
+            "select": "main > div:last-of-type > p:first-of-type",
+            "values": "match(el, '(Topics: )? ([^,]+)')\n"
+          },
+          "products": {
+            "select": "main > div:last-of-type > p:nth-of-type(2)",
+            "values": "match(el, '(Products: )? ([^,]+)')\n"
+          },
+          "hero": {
+            "select": "main > div:nth-of-type(2) img:first-of-type",
+            "value": "attribute(el, 'src')\n"
+          },
+          "teaser": {
+            "select": "main > div:nth-child(n+4):not(:last-child) p",
+            "value": "words(textContent(el), 0, 20)\n"
+          },
+          "sourceHash": {
+            "select": "head > meta[name=x-source-hash",
+            "value": "attribute(el, 'content')\n"
+          },
+          "external-path": {
+            "select": "none",
+            "value": "replace(path, '/publish/', '/')\n"
+          }
+        },
+        "queries": {
+          "recent": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date}\n",
+            "cache": 600
+          },
+          "recent-by-author": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "author"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND author:\"${author}\"\n",
+            "cache": 600
+          },
+          "recent-by-topic": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "topic"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND topics:\"${topic}\"\n",
+            "cache": 600
+          }
+        },
+        "name": "japanese"
+      },
+      "brasil": {
+        "source": "html",
+        "fetch": "https://{repo}--{owner}.hlx.page/{path}",
+        "include": [
+          "br/publish/*/*/*/*.(md|docx)"
+        ],
+        "exclude": [
+          "**/Document.*"
+        ],
+        "target": "https://adobe.sharepoint.com/:x:/r/sites/TheBlog/Shared%20Documents/theblog/br/query-index.xlsx?d=wa09c53afbe564829ae0016464bc554c7&csf=1&web=1&e=QVX7d0",
+        "sitemap": "en/query-index.json",
+        "properties": {
+          "author": {
+            "select": "main > div:nth-of-type(3) > p:nth-of-type(1)",
+            "value": "match(el, '[bB]y (.*)')\n"
+          },
+          "title": {
+            "select": "main > div > h1:first-of-type",
+            "value": "textContent(el)\n"
+          },
+          "date": {
+            "select": "main > div:nth-of-type(3)",
+            "value": "parseTimestamp(el, '[POSTED ON] MM-DD-YYYY')\n"
+          },
+          "topics": {
+            "select": "main > div:last-of-type > p:first-of-type",
+            "values": "match(el, '(Topics: )? ([^,]+)')\n"
+          },
+          "products": {
+            "select": "main > div:last-of-type > p:nth-of-type(2)",
+            "values": "match(el, '(Products: )? ([^,]+)')\n"
+          },
+          "hero": {
+            "select": "main > div:nth-of-type(2) img:first-of-type",
+            "value": "attribute(el, 'src')\n"
+          },
+          "teaser": {
+            "select": "main > div:nth-child(n+4):not(:last-child) p",
+            "value": "words(textContent(el), 0, 20)\n"
+          },
+          "sourceHash": {
+            "select": "head > meta[name=x-source-hash",
+            "value": "attribute(el, 'content')\n"
+          },
+          "external-path": {
+            "select": "none",
+            "value": "replace(path, '/publish/', '/')\n"
+          }
+        },
+        "queries": {
+          "recent": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date}\n",
+            "cache": 600
+          },
+          "recent-by-author": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "author"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND author:\"${author}\"\n",
+            "cache": 600
+          },
+          "recent-by-topic": {
+            "query": "*",
+            "hitsPerPage": 12,
+            "parameters": [
+              "language",
+              "context",
+              "date",
+              "topic"
+            ],
+            "filters": "parents:\"${context}${language}\" AND date < ${date} AND topics:\"${topic}\"\n",
+            "cache": 600
+          }
+        },
+        "name": "brasil"
+      }
+    }
+  },
+  "redirect": {
+    "redirects": [
+      "https://master--theblog--adobe.hlx.page/redirects.json",
+      {
+        "from": "^/techcomm/.*$",
+        "to": "https://blog.adobe.com/en/topics/techcomm.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/jnack/.*$",
+        "to": "https://blog.adobe.com/en/topics/photoshop.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/conversations/.*$",
+        "to": "https://blog.adobe.com/",
+        "type": "permanent"
+      },
+      {
+        "from": "^/adobeconnect/(.*)$",
+        "to": "https://blogs.connectusers.com/connectsupport/$1",
+        "type": "permanent"
+      },
+      {
+        "from": "^/connectsupport/(.*)$",
+        "to": "https://blogs.connectusers.com/connectsupport/$1",
+        "type": "permanent"
+      },
+      {
+        "from": "^/deployment/.*$",
+        "to": "https://blog.adobe.com/",
+        "type": "permanent"
+      },
+      {
+        "from": "^/psirt/.*$",
+        "to": "https://helpx.adobe.com/security.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/asset/.*$",
+        "to": "https://blog.adobe.com/en/topics/security.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/CCJKType/.*$",
+        "to": "https://ccjktype.fonts.adobe.com/",
+        "type": "permanent"
+      },
+      {
+        "from": "^/davtechtable/.*$",
+        "to": "https://blog.adobe.com/",
+        "type": "permanent"
+      },
+      {
+        "from": "^/acrolaw/.*$",
+        "to": "https://blog.adobe.com/",
+        "type": "permanent"
+      },
+      {
+        "from": "^/lightroomjournal/.*$",
+        "to": "https://blog.adobe.com/en/topics/lightroom.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/jkost/.*$",
+        "to": "https://jkost.com/blog/",
+        "type": "permanent"
+      },
+      {
+        "from": "^/coldfusion/.*$",
+        "to": "https://coldfusion.adobe.com/category/blog/",
+        "type": "permanent"
+      },
+      {
+        "from": "^/jlockman/.*$",
+        "to": "https://blog.adobe.com/",
+        "type": "permanent"
+      },
+      {
+        "from": "^/adobelife/.*$",
+        "to": "https://blog.adobe.com/en/topics/adobe-life.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/digitaldialogue/.*$",
+        "to": "https://blog.adobe.com/ko/index.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/digitalmedia/.*$",
+        "to": "https://blog.adobe.com/en/topics/creativity.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/creativecloud/.*$",
+        "to": "https://blog.adobe.com/en/topics/creative-cloud.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/digitaleurope/.*$",
+        "to": "https://blog.adobe.com/en/uk.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/adobemax/.*$",
+        "to": "https://blog.adobe.com/en/topics/adobe-max.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/japan/.*$",
+        "to": "https://blog.adobe.com/jp/index.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/creativestation/.*$",
+        "to": "https://blog.adobe.com/jp/index.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/japan-conversations/.*$",
+        "to": "https://blog.adobe.com/jp/index.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/latinoamerica/.*$",
+        "to": "https://blog.adobe.com/es/index.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/security/.*$",
+        "to": "https://blog.adobe.com/en/topics/security.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/brasil/.*$",
+        "to": "https://blog.adobe.com/br/index.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/creative/.*$",
+        "to": "https://blog.adobe.com/en/uk.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/documentcloudjapan/.*$",
+        "to": "https://blog.adobe.com/jp/index.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/creativedialogue/.*$",
+        "to": "https://blog.adobe.com/ko/index.html",
+        "type": "permanent"
+      },
+      {
+        "from": "^/sparkblog/.*$",
+        "to": "https://blog.adobespark.com/",
+        "type": "permanent"
+      },
+      {
+        "from": ".*/feed/",
+        "to": "/feed.xml",
+        "type": "permanent"
+      },
+      {
+        "from": ".*/feed$",
+        "to": "/feed.xml",
+        "type": "permanent"
+      }
+    ],
+    "version": 1,
+    "vanity": {}
+  }
+}

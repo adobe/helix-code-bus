@@ -11,7 +11,14 @@
  */
 const processQueue = require('@adobe/helix-shared-process-queue');
 const { Octokit } = require('@octokit/rest');
+const { aggregate, CONFIG_FILES, CONFIG_PATH } = require('./config.js');
 
+/**
+ * Processes the helix bot changes and sync the content with the code-bus
+ * @param {HelixBotEvent} data helix bot event data
+ * @param {UniversalContext} ctx context
+ * @returns {Promise<void>}
+ */
 async function sync(data, ctx) {
   const { log, env, storage } = ctx;
   const { GH_TOKEN } = env;
@@ -21,12 +28,23 @@ async function sync(data, ctx) {
     log,
   });
 
-  // check for branch delete or create
+  // check for branch delete or create and config changes
   let branchOp;
+  let configChanges;
+  let configSha = '';
   const changes = data.changes.filter((change) => {
     if (change.path === '*') {
       branchOp = change;
       return false;
+    }
+    if (CONFIG_FILES[change.path]) {
+      if (!configChanges) {
+        configChanges = {};
+      }
+      configChanges[change.path] = change;
+      if (!configSha) {
+        configSha = change.commit;
+      }
     }
     return true;
   });
@@ -52,33 +70,73 @@ async function sync(data, ctx) {
     await storage.copy(`/${data.owner}/${data.repo}/${data.baseRef}/`, prefix);
   }
 
-  await processQueue(changes, async (change) => {
-    const path = `${prefix}${change.path}`;
-
-    if (change.type === 'deleted') {
-      log.info('deleting', path);
-      await storage.remove(path);
-    } else {
-      let body;
-      try {
-        log.info('fetching from github', path);
-        const res = await octokit.repos.getContent({
-          owner: data.owner,
-          repo: data.repo,
-          ref: data.ref,
-          path: change.path,
-        });
-        body = Buffer.from(res.data.content, res.data.encoding);
-      } catch (e) {
-        log.error(`fetching from github error: ${e.message}`);
-        return;
+  // add missing config change if needed
+  if (configChanges) {
+    Object.keys(CONFIG_FILES).forEach((path) => {
+      if (!configChanges[path]) {
+        const change = {
+          path,
+          type: 'nop',
+        };
+        configChanges[path] = change;
+        changes.push(change);
       }
-      log.info('uploading', path);
-      await storage.put(path, body, change.contentType, {
-        'x-commit-id': change.commit,
+      configChanges[path].retainData = true;
+    });
+  }
+
+  await processQueue(changes,
+    /**
+     * Processes the change
+     * @param {Change} change
+     * @returns {Promise<void>}
+     */
+    async (change) => {
+      const path = `${prefix}${change.path}`;
+      if (change.type === 'deleted') {
+        log.info('deleting', path);
+        await storage.remove(path);
+      } else {
+        let body;
+        try {
+          log.info('fetching from github', path);
+          const res = await octokit.repos.getContent({
+            owner: data.owner,
+            repo: data.repo,
+            ref: data.ref,
+            path: change.path,
+          });
+          body = Buffer.from(res.data.content, res.data.encoding);
+        } catch (e) {
+          log.error(`fetching from github error: ${e.message}`);
+          return;
+        }
+        // retain data for config
+        if (change.retainData) {
+          // eslint-disable-next-line no-param-reassign
+          change.data = body;
+        }
+        if (change.type !== 'nop') {
+          log.info('uploading', path);
+          await storage.put(path, body, change.contentType, {
+            'x-commit-id': change.commit,
+          });
+        }
+      }
+    });
+
+  // process and upload config
+  if (configChanges) {
+    try {
+      const body = JSON.stringify(await aggregate(log, configChanges), null, 2);
+      log.info('uploading', CONFIG_PATH);
+      await storage.put(CONFIG_PATH, body, 'application/json', {
+        'x-commit-id': configSha,
       });
+    } catch (e) {
+      log.error(`Unable to process combined config: ${e.message}`);
     }
-  });
+  }
 }
 
 module.exports = sync;
