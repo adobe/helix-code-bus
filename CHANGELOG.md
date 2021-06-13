@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/adobe/helix-code-bus/compare/v1.2.2...v1.2.3) (2021-06-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @octokit/rest to v18.6.0 ([#44](https://github.com/adobe/helix-code-bus/issues/44)) ([37112c3](https://github.com/adobe/helix-code-bus/commit/37112c3ffb254498f5b11f17f3bdb5870a942245))
+
 ## [1.2.2](https://github.com/adobe/helix-code-bus/compare/v1.2.1...v1.2.2) (2021-06-13)
 
 
