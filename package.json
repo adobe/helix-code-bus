@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-code-bus",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "private": true,
   "description": "Helix Code Bus",
   "main": "src/index.js",
