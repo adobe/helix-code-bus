@@ -64,6 +64,37 @@ describe('Storage S3 test', () => {
     });
   });
 
+  it('can put object uncompressed', async () => {
+    const reqs = {};
+    const scope = nock('https://helix-code-bus.s3.fake.amazonaws.com')
+      .put('/foo?x-id=PutObject')
+      .reply(function cb(uri) {
+        reqs[uri] = {
+          body: Buffer.concat(this.req.requestBodyBuffers),
+          headers: Object.fromEntries(Object.entries(this.req.headers)
+            .filter((key) => TEST_HEADERS.indexOf(key) >= 0)),
+        };
+        return [201];
+      });
+
+    const storage = new StorageS3({
+      AWS_S3_REGION,
+      AWS_S3_ACCESS_KEY_ID,
+      AWS_S3_SECRET_ACCESS_KEY,
+    });
+    await storage.put('/foo', 'hello, world.', 'text/plain', {
+      myid: '1234',
+    }, false);
+    await scope.done();
+
+    assert.deepEqual(reqs, {
+      '/foo?x-id=PutObject': {
+        body: Buffer.from('hello, world.', 'utf-8'),
+        headers: {},
+      },
+    });
+  });
+
   it('can remove object', async () => {
     const reqs = {};
     const scope = nock('https://helix-code-bus.s3.fake.amazonaws.com')
