@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/adobe/helix-code-bus/compare/v1.2.4...v1.2.5) (2021-06-14)
+
+
+### Bug Fixes
+
+* store helix-config.json uncompressed ([#47](https://github.com/adobe/helix-code-bus/issues/47)) ([070d234](https://github.com/adobe/helix-code-bus/commit/070d234a01e13b07144e73f3091ce5ab63baf007))
+
 ## [1.2.4](https://github.com/adobe/helix-code-bus/compare/v1.2.3...v1.2.4) (2021-06-14)
 
 
