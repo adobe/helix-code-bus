@@ -17,7 +17,7 @@
     "build": "hedy -v",
     "deploy": "unset HLX_AWS_ROLE; hedy -v --deploy --test",
     "deploy-sequences": "hedy --no-build -no-hints -l latest -l major -l minor --cleanup-patch=1w --cleanup-minor=1w --cleanup-major=1y --cleanup-ci=24h",
-    "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --cleanup-ci=24h"
+    "deploy-ci": "unset HLX_AWS_ROLE; hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --cleanup-ci=24h"
   },
   "wsk": {
     "name": "helix-services/code-bus@${version}",
