@@ -26,16 +26,12 @@ class MockStorageS3 {
     this.copys = [];
   }
 
-  async put(filePath, body, contentType, meta, compressed = true) {
+  async put(filePath, body, contentType, meta) {
     if (filePath.indexOf('/fail/') >= 0) {
       throw new Error('put error');
     }
     this.added.push({
-      filePath,
-      body: body.toString('utf-8'),
-      contentType,
-      meta,
-      compressed,
+      filePath, body: body.toString('utf-8'), contentType, meta,
     });
   }
 
@@ -90,7 +86,6 @@ describe('Sync test', () => {
         meta: {
           'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
         },
-        compressed: true,
       },
       {
         body: 'hello, world',
@@ -99,7 +94,6 @@ describe('Sync test', () => {
         meta: {
           'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
         },
-        compressed: true,
       },
     ]);
     assert.deepEqual(storage.removed, [
@@ -171,7 +165,6 @@ describe('Sync test', () => {
         meta: {
           'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
         },
-        compressed: true,
       },
       {
         body: '{\n  "head": {\n    "html": "<link rel=\\"stylesheet\\" href=\\"/style/v2/style.css\\"/>"\n  },\n  "fstab": {\n    "mountpoints": {\n      "/": "https://adobe.sharepoint.com/sites/TheBlog/Shared%20Documents/theblog"\n    }\n  }\n}',
@@ -180,7 +173,6 @@ describe('Sync test', () => {
         meta: {
           'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
         },
-        compressed: false,
       },
     ]);
     assert.deepEqual(storage.removed, [
@@ -224,7 +216,6 @@ describe('Sync test', () => {
         meta: {
           'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
         },
-        compressed: true,
       },
     ]);
     assert.deepEqual(storage.removed, [
@@ -257,7 +248,6 @@ describe('Sync test', () => {
       meta: {
         'x-commit-id': '5edf98811d50b5b948f6f890f0c4367095490dbd',
       },
-      compressed: true,
     }]);
     assert.deepEqual(storage.removed, []);
     assert.deepEqual(storage.copys, [{

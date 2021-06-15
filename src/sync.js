@@ -145,7 +145,7 @@ async function sync(data, ctx) {
       log.info('uploading', path);
       await storage.put(path, body, 'application/json', {
         'x-commit-id': configSha,
-      }, false);
+      });
     } catch (e) {
       log.error(`Unable to process combined config: ${e.message}`);
     }

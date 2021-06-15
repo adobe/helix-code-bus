@@ -29,7 +29,6 @@ const AWS_S3_SECRET_ACCESS_KEY = 'fake';
 
 const TEST_HEADERS = [
   'content-type',
-  'content-encoding',
   'x-amz-meta-myid',
 ];
 
@@ -42,7 +41,7 @@ describe('Storage S3 test', () => {
         reqs[uri] = {
           body: Buffer.concat(this.req.requestBodyBuffers),
           headers: Object.fromEntries(Object.entries(this.req.headers)
-            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
+            .filter((key) => TEST_HEADERS.indexOf(key) >= 0)),
         };
         return [201];
       });
@@ -60,45 +59,7 @@ describe('Storage S3 test', () => {
     assert.deepEqual(reqs, {
       '/foo?x-id=PutObject': {
         body: await gzip(Buffer.from('hello, world.', 'utf-8')),
-        headers: {
-          'content-encoding': 'gzip',
-          'content-type': 'text/plain',
-          'x-amz-meta-myid': '1234',
-        },
-      },
-    });
-  });
-
-  it('can put object uncompressed', async () => {
-    const reqs = {};
-    const scope = nock('https://helix-code-bus.s3.fake.amazonaws.com')
-      .put('/foo?x-id=PutObject')
-      .reply(function cb(uri) {
-        reqs[uri] = {
-          body: Buffer.concat(this.req.requestBodyBuffers),
-          headers: Object.fromEntries(Object.entries(this.req.headers)
-            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
-        };
-        return [201];
-      });
-
-    const storage = new StorageS3({
-      AWS_S3_REGION,
-      AWS_S3_ACCESS_KEY_ID,
-      AWS_S3_SECRET_ACCESS_KEY,
-    });
-    await storage.put('/foo', 'hello, world.', 'text/plain', {
-      myid: '1234',
-    }, false);
-    await scope.done();
-
-    assert.deepEqual(reqs, {
-      '/foo?x-id=PutObject': {
-        body: Buffer.from('hello, world.', 'utf-8'),
-        headers: {
-          'content-type': 'text/plain',
-          'x-amz-meta-myid': '1234',
-        },
+        headers: {},
       },
     });
   });
@@ -111,7 +72,7 @@ describe('Storage S3 test', () => {
         reqs[uri] = {
           body,
           headers: Object.fromEntries(Object.entries(this.req.headers)
-            .filter(([key]) => TEST_HEADERS.indexOf(key) >= 0)),
+            .filter((key) => TEST_HEADERS.indexOf(key) >= 0)),
         };
         return [204];
       });

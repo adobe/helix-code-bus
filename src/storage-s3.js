@@ -49,19 +49,16 @@ class StorageS3 {
     this._log = log;
   }
 
-  async put(path, body, contentType, meta, compress = true) {
+  async put(path, body, contentType, meta) {
+    const zipped = await gzip(body);
     const input = {
-      Body: body,
+      Body: zipped,
       Bucket: this._bucket,
       ContentType: contentType,
+      ContentEncoding: 'gzip',
       Metadata: meta,
       Key: path.substring(1),
     };
-    if (compress) {
-      input.ContentEncoding = 'gzip';
-      input.Body = await gzip(body);
-    }
-
     const result = await this._s3.send(new PutObjectCommand(input));
     this._log.info(`object uploaded: ${input.Bucket}/${input.Key}`);
     return result;
