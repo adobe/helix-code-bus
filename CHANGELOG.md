@@ -1,3 +1,10 @@
+## [1.2.7](https://github.com/adobe/helix-code-bus/compare/v1.2.6...v1.2.7) (2021-07-05)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-shared-config to v1.1.7 ([#55](https://github.com/adobe/helix-code-bus/issues/55)) ([dca7737](https://github.com/adobe/helix-code-bus/commit/dca7737db2243b3a92e6cab2ccacb8301e6c9145))
+
 ## [1.2.6](https://github.com/adobe/helix-code-bus/compare/v1.2.5...v1.2.6) (2021-06-29)
 
 
